@@ -126,10 +126,62 @@ body {
 #turn {
 	display: none;
 	z-index: 10;
-	color: #ffbd38;
-	font-size: 5.5vw;
-	letter-spacing: 0.1em;
-	line-height: 1.6;
+	box-sizing: border-box;
+	padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+	gap: clamp(16px, 3vh, 24px);
+	background: radial-gradient(circle at center, #06120c 0, #000 70%);
+	color: #e8fff0;
+	line-height: 1.5;
+}
+
+#turn > * {
+	max-width: min(86vw, 340px, 100%);
+}
+
+#turn .turn-wordmark {
+	color: #66ff9e;
+	font-size: clamp(14px, 4vw, 18px);
+	font-weight: bold;
+	letter-spacing: 0.2em;
+}
+
+#turn .turn-icon {
+	width: clamp(72px, 24vw, 110px);
+	height: auto;
+	flex-shrink: 0;
+}
+
+#turn .turn-phone {
+	transform-origin: center;
+	transform-box: fill-box;
+	animation: turn-phone 3s ease-in-out infinite;
+}
+
+#turn .turn-title {
+	font-size: clamp(17px, 5vw, 22px);
+	letter-spacing: 0.04em;
+}
+
+#turn .turn-subtitle {
+	color: #38995f;
+	font-size: clamp(12px, 3.3vw, 14px);
+}
+
+#turn .turn-hint {
+	color: #247347;
+	font-size: clamp(11px, 2.8vw, 12px);
+}
+
+@keyframes turn-phone {
+	0%, 12%, 100% { transform: rotate(0deg); }
+	42%, 68% { transform: rotate(-90deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#turn .turn-phone {
+		animation: none;
+		transform: rotate(-90deg);
+	}
 }
 
 @media (orientation: portrait) and (max-width: 700px) and (any-pointer: coarse) {
@@ -141,8 +193,7 @@ body {
 #sonar::after { content: ''; position: absolute; inset: 15%; border: 1px solid #66ff9e; border-radius: 50%; animation: sonar 2.4s ease-out infinite; }
 @keyframes sonar { from { transform: scale(.2); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { #sonar::after { animation: none; } }
-#turn svg { width: 64px; margin-bottom: 1rem; }
-#status, #turn { box-sizing: border-box; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+#status { box-sizing: border-box; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
 		</style>
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="apple-mobile-web-app-title" content="DEEPSUB">
@@ -187,7 +238,18 @@ body {
 		</div>
 
 		<div id="turn">
-			<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><rect x="21" y="12" width="22" height="40" rx="3" transform="rotate(35 32 32)"/><path d="M9 29A24 24 0 0 1 42 8M42 8H32M42 8V18M55 35A24 24 0 0 1 22 56M22 56H32M22 56V46"/></svg><div>ROTATE TO LANDSCAPE</div>
+			<div class="turn-wordmark">DEEPSUB</div>
+			<svg class="turn-icon" viewBox="0 0 120 120" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<circle cx="60" cy="60" r="56" stroke="#247347" stroke-opacity="0.18"/>
+				<g class="turn-phone" stroke="#66ff9e" stroke-width="2.5">
+					<rect x="43" y="31" width="34" height="58" rx="7"/>
+					<rect x="55" y="37" width="10" height="2" rx="1" fill="#66ff9e" stroke="none"/>
+				</g>
+				<path d="M107 60A47 47 0 0 0 60 13L67 7M60 13L67 20" stroke="#ffb833" stroke-width="2.5"/>
+			</svg>
+			<div class="turn-title">Rotate your device</div>
+			<div class="turn-subtitle">DEEPSUB plays in landscape</div>
+			<div class="turn-hint">Turn off rotation lock if the screen doesn't turn</div>
 		</div>
 
 		<script>
@@ -220,7 +282,7 @@ body {
 </script>
 <script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":40279436,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":40279420,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
