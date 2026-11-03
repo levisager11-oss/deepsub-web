@@ -95,7 +95,7 @@ body {
 	appearance: none;
 	-webkit-appearance: none;
 	width: min(72vw, 460px);
-	height: 6px;
+	height: 14px;
 	margin-top: 2.2em;
 	border: 1px solid #247347;
 	background: #000a08;
@@ -282,7 +282,7 @@ body {
 </script>
 <script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":40641112,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":31662720,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -291,6 +291,8 @@ const engine = new Engine(GODOT_CONFIG);
 	const statusOverlay = document.getElementById('status');
 	const statusProgress = document.getElementById('status-progress');
 	const statusNotice = document.getElementById('status-notice');
+	const statusLine = document.getElementById('status-line');
+	statusLine.textContent = 'GETTING THE SUB READY. FIRST LOAD MAY TAKE A MOMENT.';
 
 	// A long press, a pinch or a double tap belongs to the game, not to the page.
 	['contextmenu', 'gesturestart', 'gesturechange', 'dblclick', 'selectstart'].forEach((name) => {
@@ -339,7 +341,7 @@ const engine = new Engine(GODOT_CONFIG);
 		} else if (typeof err === 'string') {
 			setStatusNotice(err);
 		} else {
-			setStatusNotice('An unknown error occurred.');
+			setStatusNotice('COULD NOT START. PLEASE RELOAD AND TRY AGAIN.');
 		}
 		setStatusMode('notice');
 		initializing = false;
@@ -350,7 +352,7 @@ const engine = new Engine(GODOT_CONFIG);
 	});
 
 	if (missing.length !== 0) {
-		const missingMsg = 'This browser cannot run the game. It is missing:\n';
+		const missingMsg = 'THIS BROWSER CANNOT RUN THE GAME. IT IS MISSING:\n';
 		displayFailureNotice(missingMsg + missing.join('\n'));
 	} else {
 		setStatusMode('progress');
@@ -359,6 +361,8 @@ const engine = new Engine(GODOT_CONFIG);
 				if (current > 0 && total > 0) {
 					statusProgress.value = current;
 					statusProgress.max = total;
+					const percent = Math.floor(current / total * 100);
+					statusLine.textContent = percent < 100 ? `LOADING ${percent}% — GETTING THE SUB READY` : 'STARTING THE SUB. ALMOST READY.';
 				} else {
 					statusProgress.removeAttribute('value');
 					statusProgress.removeAttribute('max');
