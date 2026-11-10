@@ -298,6 +298,47 @@ body {
   send("hello");
 })();
 		</script>
+		<!-- The save, for Toki, before the engine starts. The game keeps its save file in IndexedDB,
+		     with a copy in localStorage ("deepsub.save", the file's text) where Toki's script sees it
+		     (core/save_data.gd). A save from before that copy existed gets it here, as soon as the
+		     page opens: when the game moves, Toki opens this address hidden and waits only briefly. -->
+		<script>
+(function () {
+  var KEY = "deepsub.save", DB = "/userfs", STORE = "FILE_DATA", MAX = 900000;
+  var FILE = "/userfs/godot/app_userdata/DEEPSUB/deepsub.cfg";
+  var ls, db;
+  try { ls = window.localStorage; if (ls.getItem(KEY) !== null || !window.indexedDB) return; } catch (e) { return; }
+  function keep(entry) {
+    var data = entry && entry.contents;
+    if (!data || !data.byteLength) return;
+    var text = new TextDecoder().decode(data);
+    if (text.charAt(0) !== "[" || new Blob([text]).size > MAX) return;
+    // The game may have made a copy meanwhile: that one is newer.
+    if (ls.getItem(KEY) === null) ls.setItem(KEY, text);
+  }
+  try {
+    var open = indexedDB.open(DB);
+    // No database: nothing was ever saved here. Leave creating it to the engine.
+    open.onupgradeneeded = function () { open.transaction.abort(); };
+    open.onerror = function (e) { e.preventDefault(); };
+    open.onsuccess = function () {
+      db = open.result;
+      try {
+        if (!db.objectStoreNames.contains(STORE)) return db.close();
+        var store = db.transaction(STORE, "readonly").objectStore(STORE);
+        var get = store.get(FILE);
+        get.onsuccess = function () {
+          try { keep(get.result); } catch (e) { /* storage full or blocked: the engine tries again */ }
+          db.close();
+        };
+        get.onerror = function () { db.close(); };
+      } catch (e) {
+        db.close();
+      }
+    };
+  } catch (e) { /* IndexedDB blocked: there is no save to copy */ }
+})();
+		</script>
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
 
@@ -364,7 +405,7 @@ body {
 </script>
 <script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":32394168,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":32394344,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
